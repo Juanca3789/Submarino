@@ -33,7 +33,8 @@ fun InitialScreen(
             text = "Sistema De Control Submarino Medidor De " +
                 "Calidad del agua",
             style = MaterialTheme.typography.displayLarge,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.onBackground
         )
         Image(painter = painterResource(id = R.drawable.logo), contentDescription = null)
         Column(

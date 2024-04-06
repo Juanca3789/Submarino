@@ -10,14 +10,12 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.movableContentOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun TopBar(title: String, buttonText: String, modifier: Modifier = Modifier) {
+fun TopBar(title: String, buttonText: String, buttonAction: () -> Unit, modifier: Modifier = Modifier) {
     Row (
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
@@ -34,7 +32,7 @@ fun TopBar(title: String, buttonText: String, modifier: Modifier = Modifier) {
                 .padding(horizontal = 12.dp)
         )
         Button(
-            onClick = { /*TODO*/ },
+            onClick = buttonAction,
             modifier = modifier
                 .padding(horizontal = 12.dp)
         ) {

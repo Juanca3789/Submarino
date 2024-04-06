@@ -18,10 +18,11 @@ import com.example.submarino.ui.components.Radar
 import com.example.submarino.ui.components.TopBar
 import com.example.submarino.ui.theme.SubmarinoTheme
 
+
 @Composable
-fun ControlScreen(modifier: Modifier = Modifier) {
+fun ControlScreen(buttonFunctions: List<() -> Unit>,topBarAction: () -> Unit, modifier: Modifier = Modifier) {
     Scaffold (
-        topBar = { TopBar(title = "Control De Movimiento", buttonText = "Monitor")},
+        topBar = { TopBar(title = "Control De Movimiento", buttonText = "Monitor", buttonAction = topBarAction)},
         modifier = Modifier
             .fillMaxSize()
     ){
@@ -33,14 +34,16 @@ fun ControlScreen(modifier: Modifier = Modifier) {
                 .padding(it)
         ){
             Radar()
-            Controllers()
+            Controllers(buttonFunctions[0])
             Slider(value = 0f, onValueChange = {})
         }
     }
 }
 
 @Composable
-fun Controllers(modifier: Modifier = Modifier) {
+fun Controllers(
+    stopFunction: () -> Unit,
+    modifier: Modifier = Modifier) {
     Row (
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceAround,
@@ -57,7 +60,7 @@ fun Controllers(modifier: Modifier = Modifier) {
             Button(onClick = { /*TODO*/ }) {
                 Text(text = "U")
             }
-            Button(onClick = { /*TODO*/ }) {
+            Button(onClick = stopFunction) {
                 Text(text = "F")
             }
             Button(onClick = { /*TODO*/ }) {
@@ -84,6 +87,6 @@ fun Controllers(modifier: Modifier = Modifier) {
 @Composable
 fun PreviewControlScreen() {
     SubmarinoTheme (darkTheme = false){
-        ControlScreen()
+        ControlScreen(listOf({}),{})
     }
 }

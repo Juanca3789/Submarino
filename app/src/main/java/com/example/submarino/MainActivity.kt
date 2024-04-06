@@ -1,5 +1,6 @@
 package com.example.submarino
 
+import android.bluetooth.BluetoothDevice
 import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -80,26 +81,47 @@ fun AppSubmarino(
             val context = LocalContext.current
             InitialScreen(
                 onClickInitialButton = {
-                    onInit(viewModel, navController, context)
+                    onInit(viewModel, context)
+                    navController.navigate(SubmarinoScreen.Connection.name)
                 }
             )
         }
         composable(route = SubmarinoScreen.Connection.name) {
+            val context = LocalContext.current
             ConnectionScreen(
+                devices = uiState.pairedDevices,
                 connectionFunction = {
-                    navController.navigate(SubmarinoScreen.Control.name)
+                    connectionFunction(viewModel, navController, it, context)
+                },
+                topBarAction = {
+                    navController.popBackStack(SubmarinoScreen.Start.name, inclusive = false)
+                },
+                reloadFunction = {
+                    onInit(viewModel, context)
                 }
             )
         }
         composable(route = SubmarinoScreen.Control.name) {
-            ControlScreen()
+            ControlScreen(
+                buttonFunctions = listOf({viewModel.sendData("F")}),
+                topBarAction = {
+                    navController.navigate(SubmarinoScreen.Start.name)
+                }
+            )
         }
     }
 }
 
 fun onInit(viewModel: SubmarinoViewModel,
-           navController: NavHostController,
            context: Context) {
     viewModel.initBluetooth(context = context)
-    navController.navigate(SubmarinoScreen.Connection.name)
+}
+
+fun connectionFunction(viewModel: SubmarinoViewModel,
+                       navController: NavHostController,
+                       device: BluetoothDevice,
+                       context: Context) {
+    viewModel.setConnectedDevice(device= device)
+    viewModel.connectToMicrocontroller(context= context)
+    navController.navigate(SubmarinoScreen.Control.name)
 }

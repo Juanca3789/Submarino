@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -31,38 +30,49 @@ import com.example.submarino.ui.components.TopBar
 import com.example.submarino.ui.theme.SubmarinoTheme
 
 @Composable
-fun ConnectionScreen(connectionFunction: () -> Unit, modifier: Modifier = Modifier) {
+fun ConnectionScreen(devices: Set<BluetoothDevice>?, connectionFunction: (BluetoothDevice) -> Unit, topBarAction: () -> Unit, reloadFunction: () -> Unit, modifier: Modifier = Modifier) {
     Scaffold (
-        topBar = { TopBar(title = "Cónectate Al Submarino", buttonText = "Inicio") },
+        topBar = { TopBar(title = "Cónectate Al Submarino", buttonText = "Inicio", buttonAction = topBarAction) },
         modifier = Modifier
             .fillMaxSize()
     ){
         Column (
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier= modifier
+                .fillMaxSize()
                 .padding(it)
         ){
             DevicesList(
-                devices = listOf(),
+                devices = devices,
                 connectionFunction= connectionFunction
             )
+            Button(onClick = reloadFunction) {
+                Text(text = "Reload")
+            }
         }
     }
 }
 
 @Composable
-fun DevicesList(devices: List<BluetoothDevice>, connectionFunction: () -> Unit, modifier: Modifier = Modifier) {
+fun DevicesList(devices: Set<BluetoothDevice>?, connectionFunction: (BluetoothDevice) -> Unit, modifier: Modifier = Modifier) {
     LazyColumn(
+        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
+            .fillMaxWidth()
     ) {
-        items(devices) {
-            CardBTDevice(device = it, onClickButtonConnect = connectionFunction)
+        devices?.forEach{
+            item {
+                CardBTDevice(device = it, onClickButtonConnect = connectionFunction)
+            }
         }
     }
 }
 
 @Composable
-fun CardBTDevice(device: BluetoothDevice, onClickButtonConnect: () -> Unit, modifier: Modifier = Modifier) {
+fun CardBTDevice(device: BluetoothDevice, onClickButtonConnect: (BluetoothDevice) -> Unit, modifier: Modifier = Modifier) {
    Row (
+       verticalAlignment = Alignment.CenterVertically,
+       horizontalArrangement = Arrangement.SpaceBetween,
        modifier= Modifier
            .fillMaxWidth()
            .height(80.dp)
@@ -74,25 +84,24 @@ fun CardBTDevice(device: BluetoothDevice, onClickButtonConnect: () -> Unit, modi
                .size(70.dp)
        )
        Column (
-           verticalArrangement = Arrangement.SpaceAround,
+           verticalArrangement = Arrangement.Center,
            modifier = modifier
                .fillMaxHeight()
        ){
             if (ActivityCompat.checkSelfPermission(
                     LocalContext.current,
                     Manifest.permission.BLUETOOTH_CONNECT
-                ) != PackageManager.PERMISSION_GRANTED
+                ) == PackageManager.PERMISSION_GRANTED
             ) {
                 Text(
                     text = "Name: " + device.name
                 )
                 Text(
-                    text = "Adress" + device.address
+                    text = "Adress: " + device.address
                 )
             }
-
        }
-       Button(onClick = onClickButtonConnect) {
+       Button(onClick = { onClickButtonConnect(device) }) {
            Text(text = "Conectar")
        }
    }
@@ -102,6 +111,6 @@ fun CardBTDevice(device: BluetoothDevice, onClickButtonConnect: () -> Unit, modi
 @Composable
 fun PreviewConnectionScreen() {
     SubmarinoTheme {
-        ConnectionScreen({})
+        ConnectionScreen(setOf(),{},{},{})
     }
 }
