@@ -13,6 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -69,7 +70,7 @@ enum class SubmarinoScreen {
 
 @Composable
 fun AppSubmarino(
-    viewModel: SubmarinoViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
+    viewModel: SubmarinoViewModel = viewModel(),
     navController: NavHostController = rememberNavController()
     ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -106,7 +107,8 @@ fun AppSubmarino(
                 buttonFunctions = listOf({viewModel.sendData("F")}),
                 topBarAction = {
                     navController.navigate(SubmarinoScreen.Start.name)
-                }
+                },
+                dataText = uiState.receivedData
             )
         }
     }
@@ -124,4 +126,5 @@ fun connectionFunction(viewModel: SubmarinoViewModel,
     viewModel.setConnectedDevice(device= device)
     viewModel.connectToMicrocontroller(context= context)
     navController.navigate(SubmarinoScreen.Control.name)
+    //viewModel.readData()
 }

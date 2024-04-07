@@ -14,11 +14,13 @@ import android.os.Build
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.submarino.data.AppState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import java.io.IOException
 import java.util.UUID
 
@@ -40,6 +42,7 @@ class SubmarinoViewModel : ViewModel() {
     private lateinit var connectedDevice: BluetoothDevice
     private val MY_UUID: UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
     private lateinit var connectionSocket: BluetoothSocket
+
     fun setConnectedDevice(device: BluetoothDevice) {
         connectedDevice = device
     }
@@ -110,4 +113,26 @@ class SubmarinoViewModel : ViewModel() {
             Log.e(TAG, "Error: " + e.message)
         }
     }
+
+    fun readData(){
+        viewModelScope.launch {
+            val buffer = ByteArray(1024)
+            while (true){
+                if (connectionSocket.inputStream.available() > 0){
+                    try {
+                        connectionSocket.inputStream.read(buffer)
+                    }catch (e: IOException){
+                        Log.d("Disconnected", "readData: ")
+                    }
+                    val readMsg = buffer.toString()
+                    _uiState.update {currentState ->
+                        currentState.copy(
+                            receivedData = readMsg
+                        )
+                    }
+                }
+            }
+        }
+    }
+
 }
