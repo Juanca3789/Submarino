@@ -121,14 +121,14 @@ class SubmarinoViewModel : ViewModel() {
                 if (connectionSocket.inputStream.available() > 0){
                     try {
                         connectionSocket.inputStream.read(buffer)
+                        val readMsg = buffer.toString()
+                        _uiState.update {currentState ->
+                            currentState.copy(
+                                receivedData = readMsg
+                            )
+                        }
                     }catch (e: IOException){
                         Log.d("Disconnected", "readData: ")
-                    }
-                    val readMsg = buffer.toString()
-                    _uiState.update {currentState ->
-                        currentState.copy(
-                            receivedData = readMsg
-                        )
                     }
                 }
             }

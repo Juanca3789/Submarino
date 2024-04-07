@@ -39,7 +39,7 @@ fun ControlScreen(buttonFunctions: List<() -> Unit>, topBarAction: () -> Unit, d
                 text = "_" + dataText,
                 color = MaterialTheme.colorScheme.onBackground
             )
-            Controllers(buttonFunctions)
+            Controllers(buttonFunctions[0])
             Slider(value = 0f, onValueChange = {})
         }
     }
@@ -47,7 +47,7 @@ fun ControlScreen(buttonFunctions: List<() -> Unit>, topBarAction: () -> Unit, d
 
 @Composable
 fun Controllers(
-    functions: List<() -> Unit>,
+    functions: () -> Unit,
     modifier: Modifier = Modifier) {
     Row (
         verticalAlignment = Alignment.CenterVertically,
@@ -65,7 +65,7 @@ fun Controllers(
             Button(onClick = {}) {
                 Text(text = "U")
             }
-            Button(onClick = {functions[0]}) {
+            Button(onClick = functions) {
                 Text(text = "F")
             }
             Button(onClick = {}) {
