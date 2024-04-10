@@ -16,12 +16,14 @@ import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.submarino.data.AppState
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.IOException
+import java.nio.charset.Charset
 import java.util.UUID
 
 fun Context.findActivity(): Activity {
@@ -36,13 +38,15 @@ fun Context.findActivity(): Activity {
 class SubmarinoViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(AppState())
     val uiState: StateFlow<AppState> = _uiState.asStateFlow()
+    //Bluetooth
     private val REQUEST_ENABLE_BT = 1
     private lateinit var bluetoothManager: BluetoothManager
     private lateinit var bluetoothAdapter: BluetoothAdapter
     private lateinit var connectedDevice: BluetoothDevice
     private val MY_UUID: UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
     private lateinit var connectionSocket: BluetoothSocket
-
+    private val buffer = ByteArray(1024)
+    private var numBytes: Int = 0
     fun setConnectedDevice(device: BluetoothDevice) {
         connectedDevice = device
     }
@@ -115,23 +119,42 @@ class SubmarinoViewModel : ViewModel() {
     }
 
     fun readData(){
-        viewModelScope.launch {
-            val buffer = ByteArray(1024)
+        viewModelScope.launch(context = Dispatchers.IO) {
             while (true){
-                if (connectionSocket.inputStream.available() > 0){
-                    try {
-                        connectionSocket.inputStream.read(buffer)
-                        val readMsg = buffer.toString()
+                if(connectionSocket.inputStream.available() > 0){
+                    val num =
+                        try {
+                            connectionSocket.inputStream.read(buffer, numBytes, buffer.size - numBytes)
+                        }
+                        catch (e: IOException){
+                            Log.d("Disconnected", e.toString())
+                        }
+                    numBytes += num
+                    if(buffer[numBytes - 1].toInt() == 10){
+                        val auxBuffer = ByteArray(numBytes)
+                        for (i in 0..numBytes - 1){
+                            auxBuffer[i] = buffer[i]
+                            buffer[i] = 0
+                        }
+                        val readMsg = auxBuffer.toString(Charset.defaultCharset())
+                        Log.d("DATA RECEIVER", readMsg)
                         _uiState.update {currentState ->
                             currentState.copy(
                                 receivedData = readMsg
                             )
                         }
-                    }catch (e: IOException){
-                        Log.d("Disconnected", "readData: ")
+                        numBytes = 0
                     }
                 }
             }
+        }
+    }
+
+    fun setSpeed(speed: Float){
+        _uiState.update {currentState ->
+            currentState.copy(
+                velocity = speed
+            )
         }
     }
 

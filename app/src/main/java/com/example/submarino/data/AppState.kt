@@ -7,5 +7,6 @@ data class AppState (
     val tss:  Double = 0.0,
     val radarPosition: Double = 0.0,
     val pairedDevices: Set<BluetoothDevice>? = null,
-    val receivedData: String = ""
+    val receivedData: String = "",
+    val velocity: Float = 0.0f
 )

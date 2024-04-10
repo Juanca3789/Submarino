@@ -104,11 +104,25 @@ fun AppSubmarino(
         }
         composable(route = SubmarinoScreen.Control.name) {
             ControlScreen(
-                buttonFunctions = listOf({viewModel.sendData("F")}),
+                buttonFunctions = listOf(
+                    {viewModel.sendData("-")},
+                    {viewModel.sendData("L")},
+                    {viewModel.sendData("U")},
+                    {viewModel.sendData("F")},
+                    {viewModel.sendData("D")},
+                    {viewModel.sendData("R")},
+                    {viewModel.sendData("A")},
+                    {viewModel.sendData("S")},
+                    {viewModel.sendData("+")}
+                ),
                 topBarAction = {
                     navController.navigate(SubmarinoScreen.Start.name)
                 },
-                dataText = uiState.receivedData
+                dataText = uiState.receivedData,
+                speedValue = uiState.velocity,
+                setSpeed = {
+                    viewModel.setSpeed(it)
+                }
             )
         }
     }
@@ -126,5 +140,5 @@ fun connectionFunction(viewModel: SubmarinoViewModel,
     viewModel.setConnectedDevice(device= device)
     viewModel.connectToMicrocontroller(context= context)
     navController.navigate(SubmarinoScreen.Control.name)
-    //viewModel.readData()
+    viewModel.readData()
 }

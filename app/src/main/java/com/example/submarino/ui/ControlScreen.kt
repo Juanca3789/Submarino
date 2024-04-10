@@ -1,12 +1,25 @@
 package com.example.submarino.ui
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.Redo
+import androidx.compose.material.icons.automirrored.filled.Undo
+import androidx.compose.material.icons.filled.ArrowDownward
+import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.material.icons.filled.KeyboardDoubleArrowDown
+import androidx.compose.material.icons.filled.KeyboardDoubleArrowUp
+import androidx.compose.material.icons.filled.Redo
+import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
@@ -21,7 +34,13 @@ import com.example.submarino.ui.theme.SubmarinoTheme
 
 
 @Composable
-fun ControlScreen(buttonFunctions: List<() -> Unit>, topBarAction: () -> Unit, dataText: String,modifier: Modifier = Modifier) {
+fun ControlScreen(
+    buttonFunctions: List<() -> Unit>,
+    topBarAction: () -> Unit,
+    dataText: String,
+    speedValue: Float,
+    setSpeed: (Float) -> Unit,
+    modifier: Modifier = Modifier) {
     Scaffold (
         topBar = { TopBar(title = "Control De Movimiento", buttonText = "Monitor", buttonAction = topBarAction)},
         modifier = Modifier
@@ -35,57 +54,89 @@ fun ControlScreen(buttonFunctions: List<() -> Unit>, topBarAction: () -> Unit, d
                 .padding(it)
         ){
             Radar()
-            Text(
-                text = "_" + dataText,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-            Controllers(buttonFunctions[0])
-            Slider(value = 0f, onValueChange = {})
+            Controllers(buttonFunctions, dataText, speedValue, setSpeed)
         }
     }
 }
 
 @Composable
 fun Controllers(
-    functions: () -> Unit,
+    functions: List<() -> Unit>,
+    dataText : String,
+    speedValue: Float,
+    setSpeed: (Float) -> Unit,
     modifier: Modifier = Modifier) {
-    Row (
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceAround,
-        modifier = modifier
-                .fillMaxWidth()
+    Column (
+        verticalArrangement = Arrangement.SpaceAround
     ){
-        Button(onClick = {}) {
-            Text(text = "GI")
-        }
-        Button(onClick = {}) {
-            Text(text = "L")
-        }
-        Column {
-            Button(onClick = {}) {
-                Text(text = "U")
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceAround,
+            modifier = modifier
+                .fillMaxWidth()
+        ) {
+            Button(onClick = functions[0]) {
+                Icon(imageVector = Icons.AutoMirrored.Filled.Undo, contentDescription = null)
             }
-            Button(onClick = functions) {
-                Text(text = "F")
-            }
-            Button(onClick = {}) {
-                Text(text = "D")
-            }
-        }
-        Button(onClick = { /*TODO*/ }) {
-            Text(text = "R")
-        }
-        Column {
-            Button(onClick = { /*TODO*/ }) {
-                Text(text = "A")
-            }
-            Button(onClick = { /*TODO*/ }) {
-                Text(text = "S")
+            Text(
+                text = "_" + dataText,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+            Button(onClick = functions[8]) {
+                Icon(imageVector = Icons.AutoMirrored.Filled.Redo, contentDescription = null)
             }
         }
-        Button(onClick = { /*TODO*/ }) {
-            Text(text = "GD")
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceAround,
+            modifier = modifier
+                .fillMaxWidth()
+        ) {
+            Row (
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ){
+                Button(onClick = functions[1]) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = null
+                    )
+                }
+                Column {
+                    Button(onClick = functions[2]) {
+                        Icon(imageVector = Icons.Filled.ArrowUpward, contentDescription = null)
+
+                    }
+                    Button(onClick = functions[3]) {
+                        Icon(imageVector = Icons.Filled.Stop, contentDescription = null)
+                    }
+                    Button(onClick = functions[4]) {
+                        Icon(imageVector = Icons.Filled.ArrowDownward, contentDescription = null)
+                    }
+                }
+                Button(onClick = functions[5]) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                        contentDescription = null
+                    )
+                }
+            }
+            Column {
+                Button(onClick = functions[6]) {
+                    Icon(
+                        imageVector = Icons.Filled.KeyboardDoubleArrowUp,
+                        contentDescription = null
+                    )
+                }
+                Button(onClick = functions[7]) {
+                    Icon(
+                        imageVector = Icons.Filled.KeyboardDoubleArrowDown,
+                        contentDescription = null
+                    )
+                }
+            }
         }
+        Slider(value = speedValue, onValueChange = setSpeed)
     }
 }
 
@@ -93,6 +144,6 @@ fun Controllers(
 @Composable
 fun PreviewControlScreen() {
     SubmarinoTheme (darkTheme = false){
-        ControlScreen(listOf({}),{}, "")
+        ControlScreen(listOf({}),{}, "", 0f, {})
     }
 }
