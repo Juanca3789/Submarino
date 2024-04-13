@@ -132,16 +132,32 @@ class SubmarinoViewModel : ViewModel() {
                     numBytes += num
                     if(buffer[numBytes - 1].toInt() == 10){
                         val auxBuffer = ByteArray(numBytes)
-                        for (i in 0..numBytes - 1){
+                        for (i in 0..<numBytes){
                             auxBuffer[i] = buffer[i]
                             buffer[i] = 0
                         }
                         val readMsg = auxBuffer.toString(Charset.defaultCharset())
                         Log.d("DATA RECEIVER", readMsg)
-                        _uiState.update {currentState ->
-                            currentState.copy(
-                                receivedData = readMsg
-                            )
+                        val received = readMsg.split('=', ',')
+                        _uiState.update { currentState->
+                            when(received[0]) {
+                                "R" -> currentState.copy(
+                                    radarPosition = received[1].toDouble(),
+                                    radarDistance = received[2].toDouble()
+                                )
+                                "TSS" -> currentState.copy(
+                                    tss = received[1].toDouble()
+                                )
+                                "TDS" -> currentState.copy(
+                                    tds = received[1].toDouble()
+                                )
+                                "PH" -> currentState.copy(
+                                    ph = received[1].toDouble()
+                                )
+                                else -> currentState.copy(
+                                    receivedData = readMsg
+                                )
+                            }
                         }
                         numBytes = 0
                     }

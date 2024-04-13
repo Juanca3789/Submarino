@@ -28,28 +28,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            /*
-            if (ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.BLUETOOTH_CONNECT
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                if(Build.VERSION.SDK_INT > 30){
-                    val permission = arrayOf(Manifest.permission.BLUETOOTH_CONNECT)
-                    ActivityCompat.requestPermissions(this, permission, REQUEST_ENABLE_BT)
-                }
-                else{
-                    val permission = arrayOf(Manifest.permission.BLUETOOTH_ADMIN)
-                    ActivityCompat.requestPermissions(this, permission, REQUEST_ENABLE_BT)
-                }
-            }
-            bluetoothManager = getSystemService(BluetoothManager::class.java)
-            bluetoothAdapter = bluetoothManager.adapter
-            if (!bluetoothAdapter.isEnabled) {
-                val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
-            }
-            */
             SubmarinoTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -65,7 +43,8 @@ class MainActivity : ComponentActivity() {
 enum class SubmarinoScreen {
     Start,
     Connection,
-    Control
+    Control,
+    Monitor
 }
 
 @Composable
@@ -116,12 +95,22 @@ fun AppSubmarino(
                     {viewModel.sendData("+")}
                 ),
                 topBarAction = {
-                    navController.navigate(SubmarinoScreen.Start.name)
+                    navController.navigate(SubmarinoScreen.Monitor.name)
                 },
                 dataText = uiState.receivedData,
                 speedValue = uiState.velocity,
                 setSpeed = {
                     viewModel.setSpeed(it)
+                }
+            )
+        }
+        composable(route= SubmarinoScreen.Monitor.name){
+            MonitorScreen(
+                phValue = uiState.ph,
+                tdsValue = uiState.tds,
+                tssValue = uiState.tss,
+                topBarAction = {
+                    navController.popBackStack(SubmarinoScreen.Control.name, inclusive = false)
                 }
             )
         }
