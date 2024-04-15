@@ -25,6 +25,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,6 +41,7 @@ fun ControlScreen(
     dataText: String,
     speedValue: Float,
     setSpeed: (Float) -> Unit,
+    radPosition: Float = 0f,
     modifier: Modifier = Modifier) {
     Scaffold (
         topBar = { TopBar(title = "Control De Movimiento", buttonText = "Monitor", buttonAction = topBarAction)},
@@ -53,7 +55,7 @@ fun ControlScreen(
                 .fillMaxSize()
                 .padding(it)
         ){
-            Radar()
+            Radar(position = radPosition)
             Controllers(buttonFunctions, dataText, speedValue, setSpeed)
         }
     }

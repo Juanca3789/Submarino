@@ -16,7 +16,9 @@ import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.submarino.data.AppState
+import com.example.submarino.data.Punto
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -141,10 +143,28 @@ class SubmarinoViewModel : ViewModel() {
                         val received = readMsg.split('=', ',')
                         _uiState.update { currentState->
                             when(received[0]) {
-                                "R" -> currentState.copy(
-                                    radarPosition = received[1].toDouble(),
-                                    radarDistance = received[2].toDouble()
-                                )
+                                "RA" -> {
+                                    val actList = currentState.objects.toMutableList()
+                                    actList.add(Punto(angle= received[1].toFloat(), distance = received[2].toFloat()))
+                                    currentState.copy(
+                                        objects = actList
+                                    )
+                                }
+                                "RU" -> {
+                                    val actList = currentState.objects.toMutableList()
+                                    actList.remove(actList.find {it.angle == received[1].toFloat()})
+                                    actList.add(Punto(angle= received[1].toFloat(), distance = received[2].toFloat()))
+                                    currentState.copy(
+                                        objects = actList
+                                    )
+                                }
+                                "RD" -> {
+                                    val actList = currentState.objects.toMutableList()
+                                    actList.remove(actList.find {it.angle == received[1].toFloat()})
+                                    currentState.copy(
+                                        objects = actList
+                                    )
+                                }
                                 "TSS" -> currentState.copy(
                                     tss = received[1].toDouble()
                                 )
@@ -174,4 +194,15 @@ class SubmarinoViewModel : ViewModel() {
         }
     }
 
+    suspend fun radarSpin() {
+        while (true) {
+            _uiState.update {currentState ->
+                val actPos = currentState.radarPosition
+                currentState.copy(
+                    radarPosition = (actPos - 1) % 360
+                )
+            }
+            delay(14)
+        }
+    }
 }

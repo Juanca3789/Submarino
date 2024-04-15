@@ -8,6 +8,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -82,6 +83,9 @@ fun AppSubmarino(
             )
         }
         composable(route = SubmarinoScreen.Control.name) {
+            LaunchedEffect(key1 = null){
+                viewModel.radarSpin()
+            }
             ControlScreen(
                 buttonFunctions = listOf(
                     {viewModel.sendData("-")},
@@ -101,7 +105,8 @@ fun AppSubmarino(
                 speedValue = uiState.velocity,
                 setSpeed = {
                     viewModel.setSpeed(it)
-                }
+                },
+                radPosition = uiState.radarPosition.toFloat()
             )
         }
         composable(route= SubmarinoScreen.Monitor.name){

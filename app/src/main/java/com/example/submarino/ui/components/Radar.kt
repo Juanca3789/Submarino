@@ -13,12 +13,18 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.submarino.data.Punto
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 
 @Composable
-fun Radar(modifier: Modifier = Modifier, size: Float = 380f, position: Float = 0f) {
+fun Radar(
+    modifier: Modifier = Modifier,
+    size: Float = 380f,
+    position: Float = 0f,
+    objects: List<Punto> = listOf()
+) {
     val angular = 0.0
     Canvas(modifier = modifier
         .height(size.dp)
@@ -75,7 +81,11 @@ fun Radar(modifier: Modifier = Modifier, size: Float = 380f, position: Float = 0
                 )
                 a += (PI / 180)
             }
-        })
+            objects.forEach {
+                drawCircle(color = Color.Red, center= Offset(it.x, it.y))
+            }
+        }
+    )
 }
 
 @Preview
