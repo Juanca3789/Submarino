@@ -114,6 +114,7 @@ fun AppSubmarino(
                 phValue = uiState.ph,
                 tdsValue = uiState.tds,
                 tssValue = uiState.tss,
+                tempValue = uiState.temperature,
                 topBarAction = {
                     navController.popBackStack(SubmarinoScreen.Control.name, inclusive = false)
                 }

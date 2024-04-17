@@ -3,6 +3,7 @@ package com.example.submarino.ui.components
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
@@ -19,28 +20,54 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 @Composable
-fun Termometer(temperature: Float, modifier: Modifier = Modifier) {
+fun Termometer(temperature: Float, height: Float = 400f, strokeWidth : Float = 3f, modifier: Modifier = Modifier) {
+    val width: Float = height / 2
+    val lineColor = MaterialTheme.colorScheme.onBackground
     Canvas(modifier = modifier
-        .height(400.dp)
-        .width(300.dp)
+        .height(height.dp)
+        .width(width.dp)
         .drawWithCache {
             onDrawWithContent {
                 drawContent()
                 val path = Path()
-                path.addArc(Rect(Offset(150.dp.toPx(), 350.dp.toPx()), 50.dp.toPx()), -50f, 280f)
-                path.lineTo((150 + (50 * cos(40f))).dp.toPx(), 50.dp.toPx())
-                path.addArc(Rect(Offset(150.dp.toPx(), 50.dp.toPx()), (-(50 * cos(40f))).dp.toPx()), -180f, 180f)
-                path.lineTo((150 - (50 * cos(40f))).dp.toPx(), (350 - (50 * sin(40f))).dp.toPx())
-                path.addArc(Rect(Offset(150.dp.toPx(), 350.dp.toPx()), 35.dp.toPx()), 0f, 245f)
-                path.lineTo((150 - (35 * cos(20f))).dp.toPx(), 50.dp.toPx())
-                var posy = 51.5f.dp.toPx()
-                val posx = (150 - (35 * cos(20f))).dp.toPx()
-                while (posy < (50 * 6).dp.toPx()){
+                path.addArc(
+                    Rect(
+                        Offset((width / 2).dp.toPx(), ((7 * height) / 8).dp.toPx()),
+                        (height / 8).dp.toPx()
+                    ), -50f, 280f
+                )
+                path.lineTo(
+                    ((width / 2) + ((height / 8) * cos(40f))).dp.toPx(),
+                    (height / 8).dp.toPx()
+                )
+                path.addArc(
+                    Rect(
+                        Offset((width / 2).dp.toPx(), (height / 8).dp.toPx()),
+                        (-((height / 8) * cos(40f))).dp.toPx()
+                    ), -180f, 180f
+                )
+                path.lineTo(
+                    ((width / 2) - ((height / 8) * cos(40f))).dp.toPx(),
+                    (((7 * height) / 8) - ((height / 8) * sin(40f))).dp.toPx()
+                )
+                path.addArc(
+                    Rect(
+                        Offset((width / 2).dp.toPx(), ((7 * height) / 8).dp.toPx()),
+                        (height / 11.42857).dp.toPx()
+                    ), 0f, 245f
+                )
+                path.lineTo(
+                    ((width / 2) - ((height / 11.42857) * cos(20f))).dp.toPx(),
+                    (height / 8).dp.toPx()
+                )
+                var posy = ((height / 8) + (strokeWidth / 2)).dp.toPx()
+                val posx = ((width / 2) - ((height / 11.42857) * cos(20f))).dp.toPx()
+                while (posy < ((height / 8) * 6).dp.toPx()) {
                     path.moveTo(posx, posy)
-                    path.lineTo(posx + 10.dp.toPx(), posy)
-                    posy += 30.dp.toPx()
+                    path.lineTo(posx + (height / 40).dp.toPx(), posy)
+                    posy += (height / 13.33333).dp.toPx()
                 }
-                drawPath(path, Color.Black, style = Stroke(width = 3.dp.toPx()))
+                drawPath(path, lineColor, style = Stroke(width = strokeWidth.dp.toPx()))
             }
         }
     ){
@@ -55,9 +82,9 @@ fun Termometer(temperature: Float, modifier: Modifier = Modifier) {
         )
         val path = Path()
         val path2 = Path()
-        path.addArc(Rect(Offset(150.dp.toPx(), 350.dp.toPx()), 35.dp.toPx()), 0f, 360f)
-        path2.addRect(Rect(topLeft = Offset((150 - (35 * cos(20f))).dp.toPx(), 50f.dp.toPx()), bottomRight = Offset((150 + (35 * cos(20f))).dp.toPx(), (350 - (35 * sin(20f))).dp.toPx())))
-        path.addArc(Rect(Offset(150.dp.toPx(), 50.dp.toPx()), ((35 * cos(20f))).dp.toPx()), -180f, 180f)
+        path.addArc(Rect(Offset((width / 2).dp.toPx(), ((7 * height) / 8).dp.toPx()), (height / 11.42857).dp.toPx()), 0f, 360f)
+        path2.addRect(Rect(topLeft = Offset(((width / 2) - ((height / 11.42857) * cos(20f))).dp.toPx(), (height / 8).dp.toPx()), bottomRight = Offset(((width / 2) + ((height / 11.42857) * cos(20f))).dp.toPx(), (((7 * height) / 8) - ((height / 11.42857) * sin(20f))).dp.toPx())))
+        path.addArc(Rect(Offset((width/2).dp.toPx(), (height / 8).dp.toPx()), (((height / 11.42857) * cos(20f))).dp.toPx()), -180f, 180f)
         val pathF = path.or(path2)
         drawPath(pathF, brush)
     }
@@ -66,7 +93,7 @@ fun Termometer(temperature: Float, modifier: Modifier = Modifier) {
 @Preview
 @Composable
 fun PreviewTermometer() {
-    SubmarinoTheme {
+    SubmarinoTheme (darkTheme = false){
         Termometer(23f)
     }
 }

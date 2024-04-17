@@ -174,6 +174,9 @@ class SubmarinoViewModel : ViewModel() {
                                 "PH" -> currentState.copy(
                                     ph = received[1].toDouble()
                                 )
+                                "TMP" -> currentState.copy(
+                                    temperature = received[1].toDouble()
+                                )
                                 else -> currentState.copy(
                                     receivedData = readMsg
                                 )

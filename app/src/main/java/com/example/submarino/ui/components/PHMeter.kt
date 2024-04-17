@@ -4,6 +4,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
@@ -13,6 +14,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
@@ -20,6 +22,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun PHMeter(phValue: Double, modifier: Modifier = Modifier, sizeMeter: Float = 50f) {
     val textMeasurer = rememberTextMeasurer()
+    val arrowColor = MaterialTheme.colorScheme.onBackground
     val brush = Brush.horizontalGradient(
         listOf(
             Color(0xFFED1B26),
@@ -55,7 +58,8 @@ fun PHMeter(phValue: Double, modifier: Modifier = Modifier, sizeMeter: Float = 5
                 }
             }
             .graphicsLayer {
-                this.translationX = ((size.component1() / 14) * phValue).toFloat() - 18.dp.toPx()/2
+                this.translationX =
+                    ((size.component1() / 14) * phValue).toFloat() - 18.dp.toPx() / 2
             }
     ){
         val path = Path()
@@ -63,11 +67,14 @@ fun PHMeter(phValue: Double, modifier: Modifier = Modifier, sizeMeter: Float = 5
         path.lineTo(5f + 15.dp.toPx()/2, sizeMeter.dp.toPx())
         path.lineTo(5f + 15.dp.toPx(), (sizeMeter + 15).dp.toPx())
         path.close()
-        drawPath(path = path, color = Color.Black)
+        drawPath(path = path, color = arrowColor)
         drawText(
             textMeasurer,
             phValue.toString(),
-            Offset(0f,  (sizeMeter + 15).dp.toPx())
+            Offset(0f,  (sizeMeter + 15).dp.toPx()),
+            style = TextStyle(
+                color = arrowColor
+            )
         )
     }
 }

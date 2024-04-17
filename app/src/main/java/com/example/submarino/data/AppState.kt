@@ -14,6 +14,7 @@ data class AppState (
     val tds: Double = 0.0,
     val tss:  Double = 0.0,
     val ph: Double = 0.0,
+    val temperature: Double = 0.0,
     val radarPosition: Double = 0.0,
     val radarDistance: Double = 0.0,
     val pairedDevices: Set<BluetoothDevice>? = null,

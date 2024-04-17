@@ -2,9 +2,12 @@ package com.example.submarino.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -14,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.example.submarino.R
 import com.example.submarino.ui.theme.SubmarinoTheme
 
@@ -23,7 +27,7 @@ fun InitialScreen(
     modifier: Modifier = Modifier
 ) {
     Column (
-        verticalArrangement = Arrangement.SpaceEvenly,
+        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier= Modifier
             .fillMaxSize()
@@ -36,7 +40,21 @@ fun InitialScreen(
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onBackground
         )
-        Image(painter = painterResource(id = R.drawable.logo), contentDescription = null)
+        val paint  =
+            if (isSystemInDarkTheme())
+            {
+                R.drawable.logo3
+            }
+            else{
+                R.drawable.logo2
+            }
+        Image(
+            painter = painterResource(id = paint),
+            contentDescription = null,
+            modifier = modifier
+                .height(400.dp)
+                .width(400.dp)
+        )
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = modifier
@@ -54,7 +72,7 @@ fun InitialScreen(
 @Preview
 @Composable
 fun PreviewInitialScreen() {
-    SubmarinoTheme {
+    SubmarinoTheme (darkTheme = true){
         InitialScreen({})
     }
 }

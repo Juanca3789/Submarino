@@ -14,7 +14,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bluetooth
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -47,7 +51,7 @@ fun ConnectionScreen(devices: Set<BluetoothDevice>?, connectionFunction: (Blueto
                 connectionFunction= connectionFunction
             )
             Button(onClick = reloadFunction) {
-                Text(text = "Reload")
+                Icon(imageVector = Icons.Filled.Refresh, contentDescription = null)
             }
         }
     }
@@ -76,12 +80,13 @@ fun CardBTDevice(device: BluetoothDevice, onClickButtonConnect: (BluetoothDevice
        modifier= Modifier
            .fillMaxWidth()
            .height(80.dp)
+           .padding(12.dp)
    ){
-       Image(
-           painter = painterResource(id = R.drawable.logo),
+       Icon(
+           imageVector = Icons.Filled.Bluetooth,
            contentDescription = null,
-           modifier= modifier
-               .size(70.dp)
+           modifier = modifier
+               .size(50.dp)
        )
        Column (
            verticalArrangement = Arrangement.Center,
