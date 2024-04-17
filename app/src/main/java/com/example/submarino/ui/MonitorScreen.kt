@@ -1,4 +1,4 @@
-package com.example.submarino
+package com.example.submarino.ui
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement

@@ -1,5 +1,6 @@
 package com.example.submarino.data
 
+import android.app.AlertDialog
 import android.bluetooth.BluetoothDevice
 import kotlin.math.cos
 import kotlin.math.sin
@@ -20,5 +21,6 @@ data class AppState (
     val pairedDevices: Set<BluetoothDevice>? = null,
     val receivedData: String = "",
     val velocity: Float = 0.0f,
-    val objects: List<Punto> = listOf()
+    val objects: List<Punto> = listOf(),
+    val openFailConnectionDialog: Boolean = false
 )

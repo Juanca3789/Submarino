@@ -22,6 +22,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.submarino.ui.ConnectionScreen
 import com.example.submarino.ui.ControlScreen
 import com.example.submarino.ui.InitialScreen
+import com.example.submarino.ui.MonitorScreen
 import com.example.submarino.ui.theme.SubmarinoTheme
 
 class MainActivity : ComponentActivity() {
@@ -72,13 +73,21 @@ fun AppSubmarino(
             ConnectionScreen(
                 devices = uiState.pairedDevices,
                 connectionFunction = {
-                    connectionFunction(viewModel, navController, it, context)
+                    connectionFunction(viewModel, it, context)
+                    if(uiState.openFailConnectionDialog) {
+                        navController.navigate(SubmarinoScreen.Control.name)
+                        viewModel.readData()
+                    }
                 },
                 topBarAction = {
                     navController.popBackStack(SubmarinoScreen.Start.name, inclusive = false)
                 },
                 reloadFunction = {
                     onInit(viewModel, context)
+                },
+                openAlertDialog = uiState.openFailConnectionDialog,
+                dismissRequest = {
+                    viewModel.closeConnectionRequest()
                 }
             )
         }
@@ -129,11 +138,8 @@ fun onInit(viewModel: SubmarinoViewModel,
 }
 
 fun connectionFunction(viewModel: SubmarinoViewModel,
-                       navController: NavHostController,
                        device: BluetoothDevice,
                        context: Context) {
     viewModel.setConnectedDevice(device= device)
     viewModel.connectToMicrocontroller(context= context)
-    navController.navigate(SubmarinoScreen.Control.name)
-    viewModel.readData()
 }
