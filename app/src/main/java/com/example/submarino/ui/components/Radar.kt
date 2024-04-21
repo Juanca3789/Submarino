@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -23,7 +25,7 @@ fun Radar(
     modifier: Modifier = Modifier,
     size: Float = 380f,
     position: Float = 0f,
-    objects: List<Punto> = listOf()
+    objects: List<Punto> = listOf(Punto(0f, 0f))
 ) {
     val angular = 0.0
     Canvas(modifier = modifier
@@ -59,10 +61,16 @@ fun Radar(
                 }
             }
         }
+        .drawBehind {
+            objects.forEach {
+                drawCircle(color = Color.Red, center= Offset(size.dp.toPx() / 2f + it.x.dp.toPx(), size.dp.toPx() / 2f + it.y.dp.toPx()), radius = 5.dp.toPx())
+            }
+        }
         .graphicsLayer {
             this.rotationZ = position
         },
         onDraw = {
+
             val center = Offset(size.dp.toPx() / 2f, size.dp.toPx() / 2f)
             val maxRad = ((size - 2f) / 2f)
             var a = angular - (PI / 3)
@@ -80,9 +88,6 @@ fun Radar(
                     ), center, destino, strokeWidth = 1.dp.toPx()
                 )
                 a += (PI / 180)
-            }
-            objects.forEach {
-                drawCircle(color = Color.Red, center= Offset(it.x, it.y))
             }
         }
     )

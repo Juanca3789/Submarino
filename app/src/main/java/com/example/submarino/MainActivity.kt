@@ -5,6 +5,9 @@ import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.areStatusBarsVisible
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -14,6 +17,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -29,6 +35,12 @@ class MainActivity : ComponentActivity() {
     //FUNCION PRINCIPAL
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val insetsController = WindowCompat.getInsetsController(window, window.decorView)
+        insetsController.apply {
+            hide(WindowInsetsCompat.Type.statusBars())
+            systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        }
+        enableEdgeToEdge()
         setContent {
             SubmarinoTheme {
                 Surface(
@@ -73,11 +85,7 @@ fun AppSubmarino(
             ConnectionScreen(
                 devices = uiState.pairedDevices,
                 connectionFunction = {
-                    connectionFunction(viewModel, it, context)
-                    if(uiState.openFailConnectionDialog) {
-                        navController.navigate(SubmarinoScreen.Control.name)
-                        viewModel.readData()
-                    }
+                    connectionFunction(viewModel, navController, it, context)
                 },
                 topBarAction = {
                     navController.popBackStack(SubmarinoScreen.Start.name, inclusive = false)
@@ -115,7 +123,8 @@ fun AppSubmarino(
                 setSpeed = {
                     viewModel.setSpeed(it)
                 },
-                radPosition = uiState.radarPosition.toFloat()
+                radPosition = uiState.radarPosition.toFloat(),
+                objectsRadar = uiState.objects
             )
         }
         composable(route= SubmarinoScreen.Monitor.name){
@@ -138,8 +147,12 @@ fun onInit(viewModel: SubmarinoViewModel,
 }
 
 fun connectionFunction(viewModel: SubmarinoViewModel,
+                       navController: NavHostController,
                        device: BluetoothDevice,
                        context: Context) {
     viewModel.setConnectedDevice(device= device)
-    viewModel.connectToMicrocontroller(context= context)
+    if(viewModel.connectToMicrocontroller(context= context)) {
+        navController.navigate(SubmarinoScreen.Control.name)
+        viewModel.readData()
+    }
 }

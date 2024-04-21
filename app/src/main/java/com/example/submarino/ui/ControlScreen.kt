@@ -26,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.submarino.data.Punto
 import com.example.submarino.ui.components.Radar
 import com.example.submarino.ui.components.TopBar
 import com.example.submarino.ui.theme.SubmarinoTheme
@@ -39,6 +40,7 @@ fun ControlScreen(
     speedValue: Float,
     setSpeed: (Float) -> Unit,
     radPosition: Float = 0f,
+    objectsRadar: List<Punto>,
     modifier: Modifier = Modifier) {
     Scaffold (
         topBar = { TopBar(title = "Control De Movimiento", buttonText = "Monitor", buttonAction = topBarAction)},
@@ -52,7 +54,7 @@ fun ControlScreen(
                 .fillMaxSize()
                 .padding(it)
         ){
-            Radar(position = radPosition)
+            Radar(position = radPosition, objects = objectsRadar)
             Controllers(buttonFunctions, dataText, speedValue, setSpeed)
         }
     }
@@ -143,6 +145,6 @@ fun Controllers(
 @Composable
 fun PreviewControlScreen() {
     SubmarinoTheme (darkTheme = false){
-        ControlScreen(listOf({}),{}, "", 0f, {})
+        ControlScreen(listOf({}),{}, "", 0f, {}, objectsRadar = listOf(Punto(30f, 20f)))
     }
 }

@@ -89,7 +89,7 @@ class SubmarinoViewModel : ViewModel() {
         }
     }
 
-    fun connectToMicrocontroller(context: Context){
+    fun connectToMicrocontroller(context: Context) : Boolean{
         val BTTAG = "ERROR CONNECTING"
         try {
             if (ActivityCompat.checkSelfPermission(
@@ -103,11 +103,13 @@ class SubmarinoViewModel : ViewModel() {
                         openFailConnectionDialog = true
                     )
                 }
+                return false
             }
             bluetoothAdapter.cancelDiscovery()
             connectionSocket = connectedDevice.createRfcommSocketToServiceRecord(MY_UUID)
             connectionSocket.connect()
             Log.d(BTTAG, "Connectado con exito")
+            return true
         } catch (e: IOException) {
             Log.e(BTTAG, "Fallo de conexión")
             _uiState.update { currentState->
@@ -115,6 +117,7 @@ class SubmarinoViewModel : ViewModel() {
                     openFailConnectionDialog = true
                 )
             }
+            return false
         }
     }
 
