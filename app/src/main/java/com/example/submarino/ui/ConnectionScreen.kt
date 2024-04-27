@@ -34,7 +34,6 @@ import androidx.compose.ui.window.Dialog
 import androidx.core.app.ActivityCompat
 import com.example.submarino.ui.components.TopBar
 import com.example.submarino.ui.theme.SubmarinoTheme
-import java.net.CacheRequest
 
 @Composable
 fun ConnectionScreen(

@@ -67,10 +67,10 @@ class SubmarinoViewModel : ViewModel() {
                     REQUEST_ENABLE_BT
                 )
             } else {
-                val permission = arrayOf(Manifest.permission.BLUETOOTH_ADMIN)
+                val perm = arrayOf(Manifest.permission.BLUETOOTH, Manifest.permission.BLUETOOTH_ADMIN)
                 ActivityCompat.requestPermissions(
                     context.findActivity(),
-                    permission,
+                    perm,
                     REQUEST_ENABLE_BT
                 )
             }
@@ -96,14 +96,30 @@ class SubmarinoViewModel : ViewModel() {
                     context,
                     Manifest.permission.BLUETOOTH_CONNECT
                 ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                Log.d(BTTAG, "connectToMicrocontroller: ")
-                _uiState.update { currentState->
-                    currentState.copy(
-                        openFailConnectionDialog = true
-                    )
+                ) {
+                if(Build.VERSION.SDK_INT < 31){
+                    if (ActivityCompat.checkSelfPermission(
+                            context,
+                            Manifest.permission.BLUETOOTH_ADMIN
+                        ) != PackageManager.PERMISSION_GRANTED) {
+                        Log.d(BTTAG, "Admin")
+                        _uiState.update { currentState ->
+                            currentState.copy(
+                                openFailConnectionDialog = true
+                            )
+                        }
+                        return false
+                    }
                 }
-                return false
+                else {
+                    Log.d(BTTAG, "Connect: ")
+                    _uiState.update { currentState ->
+                        currentState.copy(
+                            openFailConnectionDialog = true
+                        )
+                    }
+                    return false
+                }
             }
             bluetoothAdapter.cancelDiscovery()
             connectionSocket = connectedDevice.createRfcommSocketToServiceRecord(MY_UUID)
