@@ -76,20 +76,20 @@ fun TSSMeter(turbidity: Double, height: Float = 300f,lineWidth: Float = 3f,modif
         path.lineTo((width - (height / 6)).dp.toPx(), (height - lineWidth).dp.toPx())
         path.lineTo((height / 6).dp.toPx(), (height - lineWidth).dp.toPx())
         path.close()
-        val resolution = 1024
+        val resolution = 3000
         var index = 6
         when (turbidity.toInt()) {
-            in 0..(resolution / 11) -> index = 0
-            in (resolution / 11)..<((2 * resolution) / 11) -> index = 1
-            in ((2 * resolution) / 11)..<((3 * resolution) / 11) -> index = 2
-            in ((3 * resolution) / 11)..<((4 * resolution) / 11) -> index = 3
-            in ((4 * resolution) / 11)..<((5 * resolution) / 11) -> index = 4
+            in 0..(resolution / 11) -> index = 10
+            in (resolution / 11)..<((2 * resolution) / 11) -> index = 9
+            in ((2 * resolution) / 11)..<((3 * resolution) / 11) -> index = 8
+            in ((3 * resolution) / 11)..<((4 * resolution) / 11) -> index = 7
+            in ((4 * resolution) / 11)..<((5 * resolution) / 11) -> index = 6
             in ((5 * resolution) / 11)..<((6 * resolution) / 11) -> index = 5
-            in ((6 * resolution) / 11)..<((7 * resolution) / 11) -> index = 6
-            in ((7 * resolution) / 11)..<((8 * resolution) / 11) -> index = 7
-            in ((8 * resolution) / 11)..<((9 * resolution) / 11) -> index = 8
-            in ((9 * resolution) / 11)..<((10 * resolution) / 11) -> index = 9
-            in ((10 * resolution) / 11)..<((11 * resolution) / 11) -> index = 10
+            in ((6 * resolution) / 11)..<((7 * resolution) / 11) -> index = 4
+            in ((7 * resolution) / 11)..<((8 * resolution) / 11) -> index = 3
+            in ((8 * resolution) / 11)..<((9 * resolution) / 11) -> index = 2
+            in ((9 * resolution) / 11)..<((10 * resolution) / 11) -> index = 1
+            in ((10 * resolution) / 11)..<((11 * resolution) / 11) -> index = 0
         }
         drawPath(path, colors[index])
     }
@@ -99,6 +99,6 @@ fun TSSMeter(turbidity: Double, height: Float = 300f,lineWidth: Float = 3f,modif
 @Composable
 fun PreviewTSSMeter() {
     SubmarinoTheme (darkTheme = false){
-        TSSMeter(turbidity = 800.0)
+        TSSMeter(turbidity = 1200.0)
     }
 }

@@ -13,7 +13,7 @@ import com.example.submarino.R
 
 @Composable
 fun TDSMeter(TDSValue: Float, maxWidth: Float, modifier: Modifier = Modifier) {
-    val scale = TDSValue/1024
+    val scale = TDSValue/1000
     Image (
         painter = painterResource(id = R.drawable.piedra),
         contentDescription = null,

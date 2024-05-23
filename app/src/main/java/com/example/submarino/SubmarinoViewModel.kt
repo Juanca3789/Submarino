@@ -138,13 +138,14 @@ class SubmarinoViewModel : ViewModel() {
     }
 
     fun sendData(data: String){
-        val TAG = "DATA SENDER"
-        try {
-            connectionSocket.outputStream.write(data.encodeToByteArray())
-            Log.d(TAG, data)
-        }
-        catch (e: IOException){
-            Log.e(TAG, "Error: " + e.message)
+        viewModelScope.launch (context =  Dispatchers.IO) {
+            val TAG = "DATA SENDER"
+            try {
+                connectionSocket.outputStream.write(data.encodeToByteArray())
+                Log.d(TAG, data)
+            } catch (e: IOException) {
+                Log.e(TAG, "Error: " + e.message)
+            }
         }
     }
 
@@ -173,7 +174,22 @@ class SubmarinoViewModel : ViewModel() {
                             when(received[0]) {
                                 "RA" -> {
                                     val actList = currentState.objects.toMutableList()
-                                    actList.add(Punto(angle= received[1].toFloat(), distance = received[2].toFloat()))
+                                    actList.add(
+                                        Punto(
+                                            angle= try{
+                                                received[1].toFloat()
+                                            }
+                                            catch (e: NumberFormatException){
+                                                0f
+                                            },
+                                            distance = try{
+                                                received[2].toFloat()
+                                            }
+                                            catch (e: NumberFormatException){
+                                                0f
+                                            }
+                                        )
+                                    )
                                     currentState.copy(
                                         objects = actList
                                     )
@@ -181,29 +197,72 @@ class SubmarinoViewModel : ViewModel() {
                                 "RU" -> {
                                     val actList = currentState.objects.toMutableList()
                                     actList.remove(actList.find {it.angle == received[1].toFloat()})
-                                    actList.add(Punto(angle= received[1].toFloat(), distance = received[2].toFloat()))
+                                    actList.add(
+                                        Punto(
+                                            angle= try{
+                                                        received[1].toFloat()
+                                                    }
+                                                    catch (e: NumberFormatException){
+                                                        0f
+                                                    },
+                                            distance = try{
+                                                        received[2].toFloat()
+                                                    }
+                                                    catch (e: NumberFormatException){
+                                                        0f
+                                                    }
+                                        )
+                                    )
                                     currentState.copy(
                                         objects = actList
                                     )
                                 }
                                 "RD" -> {
                                     val actList = currentState.objects.toMutableList()
-                                    actList.remove(actList.find {it.angle == received[1].toFloat()})
+                                    actList.remove(
+                                        actList.find {
+                                            it.angle == try {
+                                                received[1].toFloat()
+                                            }catch (e: NumberFormatException){
+                                                0f
+                                            }
+                                        }
+                                    )
                                     currentState.copy(
                                         objects = actList
                                     )
                                 }
                                 "TSS" -> currentState.copy(
-                                    tss = received[1].toDouble()
+                                    tss = try {
+                                        received[1].toDouble()
+                                    }
+                                    catch (e: NumberFormatException){
+                                        0.0
+                                    }
                                 )
                                 "TDS" -> currentState.copy(
-                                    tds = received[1].toDouble()
+                                    tds = try {
+                                        received[1].toDouble()
+                                    }
+                                    catch (e: NumberFormatException){
+                                        0.0
+                                    }
                                 )
                                 "PH" -> currentState.copy(
-                                    ph = received[1].toDouble()
+                                    ph = try {
+                                        received[1].toDouble()
+                                    }
+                                    catch (e: NumberFormatException){
+                                        0.0
+                                    }
                                 )
                                 "TMP" -> currentState.copy(
-                                    temperature = received[1].toDouble()
+                                    temperature = try {
+                                        received[1].toDouble()
+                                    }
+                                    catch (e: NumberFormatException){
+                                        0.0
+                                    }
                                 )
                                 else -> currentState.copy(
                                     receivedData = readMsg
@@ -223,14 +282,29 @@ class SubmarinoViewModel : ViewModel() {
                 velocity = speed
             )
         }
+        val tmpVelocidad = (4095 * _uiState.value.velocity).toInt()
+        var strImp = "V"
+        var exp = 1000
+        while (exp > 1){
+            exp = exp / 10
+            if(tmpVelocidad < exp) {
+                strImp += '0'
+            }
+        }
+        strImp += tmpVelocidad.toString()
+        this.sendData(strImp)
     }
 
     suspend fun radarSpin() {
+        var dir = 1
         while (true) {
             _uiState.update {currentState ->
                 val actPos = currentState.radarPosition
+                if(actPos.toInt() == 359 || actPos.toInt() == 0) {
+                    dir *= -1
+                }
                 currentState.copy(
-                    radarPosition = (actPos - 1) % 360
+                    radarPosition = (actPos + dir) % 360
                 )
             }
             delay(14)
@@ -244,5 +318,6 @@ class SubmarinoViewModel : ViewModel() {
             )
         }
     }
+
 
 }

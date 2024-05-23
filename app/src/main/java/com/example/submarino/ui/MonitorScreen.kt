@@ -71,7 +71,7 @@ fun MonitorScreen(
                     )
             ){
                 Termometer(temperature = tempValue.toFloat(), height = 300f)
-                Text(text = "Valor de Temperatura: $tempValue")
+                Text(text = "Temperatura: $tempValue °C")
             }
 
             Row {
@@ -87,8 +87,8 @@ fun MonitorScreen(
                         )
                         .padding(vertical = 15.dp)
                 ) {
-                    TSSMeter(turbidity = tssValue, height = 200f)
-                    Text(text = "Valor de TSS: $tssValue")
+                    TSSMeter(turbidity = tssValue, height = 175f)
+                    Text(text = "TSS: $tssValue NTU")
                 }
 
                 Column(
@@ -105,7 +105,7 @@ fun MonitorScreen(
                         .padding(vertical = 15.dp)
                 ) {
                     TDSMeter(TDSValue = tdsValue.toFloat(), maxWidth = 200f)
-                    Text(text = "Valor de TDS: $tdsValue")
+                    Text(text = "TDS: $tdsValue PPM")
                 }
             }
         }
@@ -116,6 +116,6 @@ fun MonitorScreen(
 @Composable
 fun PreviewMonitorScreen() {
     SubmarinoTheme (darkTheme = false){
-        MonitorScreen(phValue = 7.0, tdsValue = 600.0, tssValue = 800.0, tempValue = 8.0,topBarAction = {})
+        MonitorScreen(phValue = 7.0, tdsValue = 600.0, tssValue = 1200.0, tempValue = 8.0,topBarAction = {})
     }
 }
